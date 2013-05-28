@@ -38,8 +38,14 @@
 		"zendframework/zftool": "dev-master",
 		"zendframework/zend-developer-tools": "dev-master",
 		
-        "doctrine/doctrine-orm-module": "0.7.*",
+        "doctrine/common": "dev-master",
+        "doctrine/doctrine-orm-module": "0.7.x",
         "doctrine/migrations": "dev-master",
-		"sundrique/doctrine-tools": ">=0.2"
+		"sundrique/doctrine-tools": ">=0.2",
+		
+		"zf-commons/zfc-twig": "dev-master",
+		
+		"ocramius/ocra-service-manager": "dev-master",
+		"ocramius/ocra-di-compiler": "dev-master"
     }
 }

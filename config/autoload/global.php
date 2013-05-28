@@ -13,4 +13,15 @@
 
 return array(
     // ...
+	'service_manager' => array(
+		'lazy_services' => array(
+			// set the names of your lazily loaded services here
+			'ecampcore.repo.user'
+		),
+	),
+		
+	'ocra_service_manager' => array(
+		'logged_service_manager' => true,
+	)
+	
 );

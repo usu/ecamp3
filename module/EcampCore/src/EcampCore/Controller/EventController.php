@@ -17,7 +17,7 @@ class EventController
 		
 		$event = $this->ecampCore_EventRepo()->find('ee1');
 		$view = $eventRenderer->render($event);
-		
+				
 		return $view;
 	}
 	

@@ -2,11 +2,10 @@
 
 namespace EcampCore\Repository;
 
-use CoreApi\Entity\User;
-use CoreApi\Entity\UserRelationship;
+use EcampCore\Entity\User;
+use EcampCore\Entity\UserRelationship;
 
 use Doctrine\ORM\EntityRepository;
-
 
 class UserRepository extends EntityRepository
 {

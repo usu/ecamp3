@@ -1,33 +1,5 @@
 <?php
 return array(
-	
-	'aliases' => array(
-		'__repos__.ecampCore_CampRepo' => 'ecampcore.repo.camp',
-		'__repos__.ecampCore_CampTypeRepo' => 'ecampcore.repo.camptype',
-		'__repos__.ecampCore_DayRepo' => 'ecampcore.repo.day',
-		'__repos__.ecampCore_EventRepo' => 'ecampcore.repo.event',
-		'__repos__.ecampCore_EventCategoryRepo' => 'ecampcore.repo.eventcategory',
-		'__repos__.ecampCore_EventInstanceRepo' => 'ecampcore.repo.eventinstance',
-		'__repos__.ecampCore_EventPrototypeRepo' => 'ecampcore.repo.eventprototype',
-		'__repos__.ecampCore_EventRespRepo' => 'ecampcore.repo.eventresp',
-		'__repos__.ecampCore_EventTemplateRepo' => 'ecampcore.repo.eventtemplate',
-		'__repos__.ecampCore_EventTypeRepo' => 'ecampcore.repo.eventtype',
-		'__repos__.ecampCore_GroupRepo' => 'ecampcore.repo.group',
-		'__repos__.ecampCore_GroupRequestRepo' => 'ecampcore.repo.grouprequest',
-		'__repos__.ecampCore_ImageRepo' => 'ecampcore.repo.image',
-		'__repos__.ecampCore_LoginRepo' => 'ecampcore.repo.login',
-		'__repos__.ecampCore_MediumRepo' => 'ecampcore.repo.medium',
-		'__repos__.ecampCore_PeriodRepo' => 'ecampcore.repo.period',
-		'__repos__.ecampCore_PluginRepo' => 'ecampcore.repo.plugin',
-		'__repos__.ecampCore_PluginInstanceRepo' => 'ecampcore.repo.plugininstance',
-		'__repos__.ecampCore_PluginPositionRepo' => 'ecampcore.repo.pluginposition',
-		'__repos__.ecampCore_PluginPrototypeRepo' => 'ecampcore.repo.pluginprototype',
-		'__repos__.ecampCore_UIdRepo' => 'ecampcore.repo.uid',
-		'__repos__.ecampCore_UserRepo' => 'ecampcore.repo.user',
-		'__repos__.ecampCore_UserCampRepo' => 'ecampcore.repo.usercamp',
-		'__repos__.ecampCore_UserGroupRepo' => 'ecampcore.repo.usergroup',
-		'__repos__.ecampCore_UserRelationshipRepo' => 'ecampcore.repo.userrelationship',
-	),
 
 	'factories' => array(
 		'ecampcore.repo.camp' => new EcampCore\RepositoryUtil\RepositoryFactory('EcampCore\Entity\Camp'),
@@ -57,4 +29,120 @@ return array(
 		'ecampcore.repo.userrelationship' => new EcampCore\RepositoryUtil\RepositoryFactory('EcampCore\Entity\UserRelationship'),
 	),
 	
+	'initializers' => array(
+		function($instance, $sm){
+			
+			if(! is_object($instance)){
+				return;
+			}
+			
+			foreach(class_uses($instance) as $trait){
+				switch($trait){
+					
+					case 'EcampCore\RepositoryTraits\CampTrait':
+						$instance->setCampRepository($sm->get('ecampcore.repo.camp'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\CampTypeTrait':
+						$instance->setCampTypeRepository($sm->get('ecampcore.repo.camptype'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\DayTrait':
+						$instance->setDayRepository($sm->get('ecampcore.repo.day'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventTrait':
+						$instance->setEventRepository($sm->get('ecampcore.repo.event'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventCategoryTrait':
+						$instance->setEventCategoryRepository($sm->get('ecampcore.repo.eventcategory'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventInstanceTrait':
+						$instance->setEventInstanceRepository($sm->get('ecampcore.repo.eventinstance'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventPrototypeTrait':
+						$instance->setEventPrototypeRepository($sm->get('ecampcore.repo.eventprototype'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventRespTrait':
+						$instance->setEventRespRepository($sm->get('ecampcore.repo.eventresp'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventTemplateTrait':
+						$instance->setEventTemplateRepository($sm->get('ecampcore.repo.eventtemplate'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\EventTypeTrait':
+						$instance->setEventTypeRepository($sm->get('ecampcore.repo.eventtype'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\GroupTrait':
+						$instance->setGroupRepository($sm->get('ecampcore.repo.group'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\GroupRequestTrait':
+						$instance->setGroupRequestRepository($sm->get('ecampcore.repo.grouprequest'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\ImageTrait':
+						$instance->setImageRepository($sm->get('ecampcore.repo.image'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\LoginTrait':
+						$instance->setLoginRepository($sm->get('ecampcore.repo.login'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\MediumTrait':
+						$instance->setMediumRepository($sm->get('ecampcore.repo.medium'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\PeriodTrait':
+						$instance->setPeriodRepository($sm->get('ecampcore.repo.period'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\PluginTrait':
+						$instance->setPluginRepository($sm->get('ecampcore.repo.plugin'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\PluginInstanceTrait':
+						$instance->setPluginInstanceRepository($sm->get('ecampcore.repo.plugininstance'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\PluginPositionTrait':
+						$instance->setPluginPositionRepository($sm->get('ecampcore.repo.pluginposition'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\PluginPrototypeTrait':
+						$instance->setPluginPrototypeRepository($sm->get('ecampcore.repo.pluginprototype'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\UIdTrait':
+						$instance->setUIdRepository($sm->get('ecampcore.repo.uid'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\UserTrait':
+						$instance->setUserRepository($sm->get('ecampcore.repo.user'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\UserCampTrait':
+						$instance->setUserCampRepository($sm->get('ecampcore.repo.usercamp'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\UserGroupTrait':
+						$instance->setUserGroupRepository($sm->get('ecampcore.repo.usergroup'));
+						break;
+
+					case 'EcampCore\RepositoryTraits\UserRelationshipTrait':
+						$instance->setUserRelationshipRepository($sm->get('ecampcore.repo.userrelationship'));
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+	)
 );

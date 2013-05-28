@@ -25,11 +25,11 @@ abstract class BaseEntity
 	
 	
 	/**
-	 * @var Uid
-	 * @ORM\OneToOne(targetEntity="EcampCore\Entity\Uid", cascade={"persist", "remove"})
-	 * @ORM\JoinColumn(name="id", nullable=true)
+	 * @ var Uid
+	 * @ ORM\OneToOne(targetEntity="EcampCore\Entity\Uid", cascade={"persist", "remove"})
+	 * @ ORM\JoinColumn(name="id", nullable=true)
 	 */
-	protected $uid;
+// 	protected $uid;
 	
 	
 	public function __construct(){

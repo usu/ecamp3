@@ -2,18 +2,44 @@
 return array(
 	'ecamp' => array(
 		'modules' => array(
-			'core' => array(
+			'ecampcore' => array(
 				'repos' => array(
-					'module_namespace' => 'EcampCore',
-					'config_file' => __DIR__ . '/service.config.repos.php',
+					'module_namespace' 	=> 'EcampCore',
+					'config_file' 		=> __DIR__ . '/service.config.repos.php',
+					'traits_path' 		=> __DIR__ . '/../src/EcampCore/RepositoryTraits/',
+					'traits_namespace'	=> 'EcampCore\RepositoryTraits'
 				),
 				
 				'services' => array(
-					'services_path' => __DIR__ . '/../src/EcampCore/Service/',
-					'config_file' => __DIR__ . '/service.config.services.php',
+					'services_path' 	=> __DIR__ . '/../src/EcampCore/Service/',
+					'config_file' 		=> __DIR__ . '/service.config.services.php',
+					'traits_path' 		=> __DIR__ . '/../src/EcampCore/ServiceTraits/',
+					'traits_namespace'	=> 'EcampCore\ServiceTraits'
 				),
 			)
+		),
+			
+		'acl' => array(
+			'resources' => array(
+				'EcampCore\Entity\Camp'		=>  null,
+				'EcampCore\Entity\Period' 	=> 'EcampCore\Entity\Camp',
+				'EcampCore\Entity\Day' 		=> 'EcampCore\Entity\Period',
+				// ...
+					
+				'EcampCore\Entity\Group'	=> null,
+				// ...
+				
+				'EcampCore\Entity\User'		=> null,
+				// ...
+			),
+			
+			'roles' => array(
+				'guest'		=> null,
+				'member'	=> 'guest',
+				'admin'		=> 'member'
+			),
 		)
+			
 	),
 	
     'router' => array(
@@ -129,12 +155,45 @@ return array(
 		),
 	),
 	
+		
+	'd_i' => array(
+		'allowed_controllers' => array(
+			'EcampCore\Controller\TestController'
+		),
+			
+		
+		'instance' => array(
+			
+// 			'EcampCore\Controller\TestController' => array(
+// 				'parameters' => array(
+// 					'userRepo' => 'ecampcore.repo.user',
+// 					'campRepo' => 'ecampcore.repo.camp',
+// 				),
+// 			),
+		),
+		
+	),
+		
     'controllers' => array(
-        'invokables' => array(
-            'EcampCore\Controller\Index' 	=> 'EcampCore\Controller\IndexController',
-            'EcampCore\Controller\Login'	=> 'EcampCore\Controller\LoginController',
-            'EcampCore\Controller\Event'	=> 'EcampCore\Controller\EventController',
-        ),
+    	'abstract_factories' => array(
+    		'EcampCore\Controller\CommonControllerAbstractFactory'
+    	),
+    	
+//         'invokables' => array(
+//             'EcampCore\Controller\Index' 	=> 'EcampCore\Controller\IndexController',
+//             'EcampCore\Controller\Login'	=> 'EcampCore\Controller\LoginController',
+//             'EcampCore\Controller\Event'	=> 'EcampCore\Controller\EventController',
+//            'EcampCore\Controller\Test'		=> 'EcampCore\Controller\TestController',
+//         ),
+    	'factories' => array(
+    		'EcampCore\Controller\Test' => function($serviceLocator){
+				$sm = $serviceLocator->getServiceLocator()->get('ServiceManager');
+				return new EcampCore\Controller\TestController(
+    				$sm->get('ecampcore.repo.user'),
+    				$sm->get('ecampcore.repo.camp')
+    			);
+			},
+    	),
     ),
     
 	'view_manager' => array(
@@ -176,5 +235,6 @@ return array(
 				)
 			)
 		)
-	)
+	),
+	
 );

@@ -22,5 +22,34 @@ return array(
 			$campRepo = $sm->get('ecampcore.repo.camp');
 			return new EcampCore\Acl\ContextStorage($authService, $userRepo, $groupRepo, $campRepo);
 		},
+		
+	),
+	
+	'invokables' => array(
+		'EcampCore\ServiceManager\AutoDependencyInjector' => 'EcampCore\ServiceManager\AutoDependencyInjector'
+	),
+	
+	'initializers' => array(
+		function($instance, $sm){
+			
+// 			$traits = class_uses($instance);
+			
+// 			foreach($traits as $trait){
+// 				if(property_exists($trait, 'dependency_name')){
+// 					$dependency = $trait::dependency_name;
+// 					$setter = $trait::setter_method;
+					
+// 					$instance->$setter($sm->get($dependency));
+// 				}
+// 			}
+			
+// 			if($instance instanceof EcampCore\ServiceManager\AutoInjectDependenciesInterface){
+// 				$dependencyInjector = $sm->get('EcampCore\ServiceManager\AutoDependencyInjector');
+				
+// 				echo get_class($instance) . PHP_EOL;
+// 				$dependencyInjector->InjectDependencies($instance);
+				
+// 			}
+		},
 	),
 );

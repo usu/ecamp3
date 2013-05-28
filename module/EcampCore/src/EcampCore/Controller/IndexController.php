@@ -13,6 +13,7 @@ use EcampCore\RepositoryUtil\RepositoryProviderWriter;
 
 use EcampCore\ServiceUtil\ServiceConfigWriter;
 use EcampCore\ServiceUtil\ServiceProviderWriter;
+use EcampCore\RepositoryUtil\RepositoryTraitWriter;
 
 class IndexController extends AbstractBaseController 
 	implements 	UserRepositoryProvider
@@ -68,9 +69,9 @@ class IndexController extends AbstractBaseController
 	
 	public function createRepoProvidersAction(){
 		$em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-		$repoProviderWriter = new RepositoryProviderWriter($this->getServiceLocator(), $em);
+		$repoTraitWriter = new RepositoryTraitWriter($this->getServiceLocator(), $em);
 		
-		$repoProviderWriter->writeRepositoryProviderInterfaces();
+		$repoTraitWriter->writeRepositoryTraits();
 		
 		return $this->redirect()->toRoute('core/default', array('controller' => 'index', 'action' => 'index'));
 	}

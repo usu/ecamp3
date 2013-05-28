@@ -52,8 +52,7 @@ class UserCamp
 		$this->requestedRole = null;
 		$this->requestAcceptedBy = null;
 	}
-
-
+	
 
 	/**
 	 * @ORM\ManyToOne(targetEntity="User")
@@ -213,13 +212,4 @@ class UserCamp
 		return $this;
 	}
 
-
-	public static function RoleFilter($role)
-	{
-		return
-		function (UserCamp $usercamp) use ($role)
-		{
-			return $usercamp->getRole() == $role;
-		};
-	}
 }

@@ -14,14 +14,21 @@ return array(
         'DoctrineModule',
         'DoctrineORMModule',
 
+    	'OcraServiceManager',
+//    	'OcraDiCompiler',
+    	
+    	'ZfcTwig',
+    	
         'Application',
         
         'EcampCore',
         'EcampWeb',
         'EcampApi',
         'EcampDB',
+    	'EcampDev',
         
         'EcampStoryboard'
+    		
     ),
     
     'module_listener_options' => array(

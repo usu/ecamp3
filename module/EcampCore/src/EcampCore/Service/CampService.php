@@ -43,6 +43,7 @@ class CampService
 		
 		$this->getAcl()->allow(User::ROLE_USER, Resource::USER, __CLASS__.'::Create', new UserSelf());
 		$this->getAcl()->allow(User::ROLE_USER, Resource::GROUP, __CLASS__.'::Create', new GroupMember());
+		
 	}
 	
 	
@@ -78,8 +79,7 @@ class CampService
 	 * Deletes the current Camp
 	 */
 	public function Delete(Camp $camp){
-		
-		$this->aclRequire($this->me(), $camp, __CLASS__.'::'.__METHOD__);
+		$this->aclRequire($this->me(), $camp, 'administrate');
 		
 		$this->remove($camp);
 	}
