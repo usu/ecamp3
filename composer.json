@@ -47,5 +47,8 @@
 		
 		"ocramius/ocra-service-manager": "dev-master",
 		"ocramius/ocra-di-compiler": "dev-master"
+    },
+    "config": {
+        "process-timeout": 3000
     }
 }

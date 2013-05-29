@@ -30,7 +30,6 @@ use EcampCore\Acl\BelongsToUser;
  */
 class Login 
 	extends BaseEntity
-	implements BelongsToUser
 {
 
 	/**

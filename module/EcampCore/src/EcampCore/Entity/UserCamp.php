@@ -32,7 +32,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class UserCamp 
 	extends BaseEntity
-	implements BelongsToCamp
 {
 	const ROLE_NONE    = 'none';
 	const ROLE_GUEST   = 'guest';

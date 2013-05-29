@@ -37,8 +37,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class PluginInstance 
 	extends BaseEntity
-	implements  ServiceLocatorAwareInterface
-	,			BelongsToCamp
 {
 	
 	public function __construct(ServiceLocatorInterface $serviceLocator){

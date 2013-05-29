@@ -13,21 +13,12 @@ return array(
         'DoctrineTools',
         'DoctrineModule',
         'DoctrineORMModule',
-
-    	'OcraServiceManager',
-//    	'OcraDiCompiler',
     	
     	'ZfcTwig',
     	
-        'Application',
-        
-        'EcampCore',
-        'EcampWeb',
-        'EcampApi',
-        'EcampDB',
-    	'EcampDev',
-        
-        'EcampStoryboard'
+        'Web',
+    	'EcampCore',
+    	'EcampWeb'
     		
     ),
     

@@ -17,3 +17,5 @@ data/DoctrineORMModule/Proxy/**/*
 data/unittest/*
 
 public/UnitTests/result
+
+vendor/*

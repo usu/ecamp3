@@ -32,7 +32,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class EventResp 
 	extends BaseEntity
-	implements BelongsToCamp
 {
     public function __construct(){
     }

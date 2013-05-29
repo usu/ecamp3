@@ -30,7 +30,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class EventCategory 
 	extends BaseEntity
-	implements BelongsToCamp
 {
 
 	public function __construct()

@@ -66,13 +66,6 @@ class Camp extends BaseEntity
 	 * @ORM\Column(type="string", length=64, nullable=false)
 	 */
 	private $title;
-	
-	
-	/**
-	 * @var string
-	 * @ORM\Column(type="string", length=128, nullable=false)
-	 */
-	private $motto;
 
 	
 	/**
@@ -103,14 +96,6 @@ class Camp extends BaseEntity
 	 */
 	private $group;
 	
-	
-	/**
-	 * @var CampType
-	 * @ORM\ManyToOne(targetEntity="CampType")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
-	private $campType;
-
 	
 	/**
 	 * @var Doctrine\Common\Collections\ArrayCollection

@@ -1,14 +1,19 @@
 <?php
 namespace EcampCore;
 
-use Zend\Stdlib\ArrayUtils;
-use Zend\Mvc\MvcEvent;
+//use Zend\Stdlib\ArrayUtils;
+//use Zend\Mvc\MvcEvent;
+
+use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 
-use EcampCore\EntityUtil\ServiceLocatorAwareEventListener;
+//use EcampCore\EntityUtil\ServiceLocatorAwareEventListener;
 
 class Module implements 
-	ServiceProviderInterface
+	AutoloaderProviderInterface,
+	ServiceProviderInterface,
+	ConfigProviderInterface 
 {
     public function getConfig(){
         return include __DIR__ . '/config/module.config.php';
@@ -25,28 +30,8 @@ class Module implements
         );
     }
     
-    public function getServiceConfig(){
-    	$config = array();
-    	$configFiles = array(
-	    	__DIR__ . '/config/service.config.php',
-	    	__DIR__ . '/config/service.config.repos.php', 
-	    	__DIR__ . '/config/service.config.services.php',
-    	);
-    	 
-    	// Merge all module config options
-    	foreach($configFiles as $configFile) {
-    		$config = ArrayUtils::merge($config, include $configFile);
-    	}
-    	
-    	return $config;
-    }
-    
-    
-    public function onBootstrap(MvcEvent $e){
-    	$sm = $e->getApplication()->getServiceManager(); 
-    	
-    	$em = $sm->get('doctrine.entitymanager.orm_default');
-    	$em->getEventManager()->addEventSubscriber(
-    		new ServiceLocatorAwareEventListener($sm));
+    public function getServiceConfig()
+    {
+    	return include __DIR__  . '/config/service.config.php';
     }
 }

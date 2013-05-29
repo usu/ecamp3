@@ -32,7 +32,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class Event 
 	extends BaseEntity
-	implements BelongsToCamp
 {
     public function __construct(){
         $this->eventInstances = new \Doctrine\Common\Collections\ArrayCollection();

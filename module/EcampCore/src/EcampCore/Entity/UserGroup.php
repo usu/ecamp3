@@ -32,7 +32,6 @@ use EcampCore\Acl\BelongsToGroup;
  */
 class UserGroup 
 	extends BaseEntity
-	implements BelongsToGroup
 {
 	const ROLE_NONE    = 0;
 	const ROLE_MEMBER  = 10;

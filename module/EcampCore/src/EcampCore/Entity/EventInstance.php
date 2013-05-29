@@ -30,7 +30,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class EventInstance 
 	extends BaseEntity
-	implements BelongsToCamp
 {
 
 	/**

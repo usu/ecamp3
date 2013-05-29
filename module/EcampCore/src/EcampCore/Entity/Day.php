@@ -32,7 +32,6 @@ use EcampCore\Acl\BelongsToCamp;
  */
 class Day 
 	extends BaseEntity
-	implements BelongsToCamp
 {
 
 	/**
