@@ -20,53 +20,18 @@ use EcampCore\Acl\DefaultAcl;
 /**
  * @method CoreApi\Service\LoginService Simulate
  */
-abstract class ServiceBase implements 
-	ServiceLocatorAwareInterface
+abstract class ServiceBase
 {
-	/**
-	 * @var ServiceLocatorInterface
-	 */
-	private $serviceLocator;
-	
-	/**
-	 * @see Zend\ServiceManager.ServiceLocatorAwareInterface::setServiceLocator()
-	 */
-	public function setServiceLocator(ServiceLocatorInterface $serviceLocator){
-		$this->serviceLocator = $serviceLocator;
-	}
-	
-	/**
-	 * @return Zend\ServiceManager\ServiceLocatorInterface
-	 */
-	public function getServiceLocator(){
-		return $this->serviceLocator;
-	}
-	
-	
-	
-	public function __call($method, $args){
-		if($this->serviceLocator->has('__repos__.' . $method)){
-			return $this->serviceLocator->get('__repos__.' . $method);
-		}
-	
-		if($this->serviceLocator->has('__services__.' . $method)){
-			return $this->serviceLocator->get('__services__.' . $method);
-		}
-	}
-	
-	
+
 	/**
 	 * @var Doctrine\ORM\EntityManager
 	 */
-	private $em;
+	protected $em;
 	
 	/**
 	 * @return Doctrine\ORM\EntityManager
 	 */
 	protected function getEM(){
-		if($this->em == null){
-			$this->em = $this->serviceLocator->get('doctrine.entitymanager.orm_default');
-		}
 		return $this->em;
 	}
 	

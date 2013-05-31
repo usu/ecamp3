@@ -1,9 +1,9 @@
 <?php
 return array(
- 
-	'invokables' => array(
-			'EcampCore\Service\Camp' => 'EcampCore\Service\CampService',
-			'EcampCore\Service\User' => 'EcampCore\Service\UserService',
-	),
+			
+	'factories' => array(
+			'EcampCore\Service\Camp' => 'EcampCore\Service\CampServiceFactory',
+			'EcampCore\Service\User' => 'EcampCore\Service\UserServiceFactory',
+	)
 	
 );

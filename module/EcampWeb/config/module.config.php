@@ -8,8 +8,7 @@ return array(
                 'options' => array(
                     'route'    => '/web',
                     'defaults' => array(
-                        '__NAMESPACE__' => 'EcampWeb\Controller',
-                        'controller'    => 'Index',
+                        'controller'    => 'EcampWeb\Controller\Index',
                         'action'        => 'index',
                     ),
                 ),
@@ -33,7 +32,7 @@ return array(
 		
     'controllers' => array(
         'invokables' => array(
-            'EcampWeb\Controller\Index' 		=> 'EcampWeb\Controller\IndexController'
+            'EcampWeb\Controller\Index' => 'EcampWeb\Controller\IndexController',
         ),
     ),
     

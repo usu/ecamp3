@@ -3,16 +3,14 @@
 namespace EcampWeb\Controller;
 
 use Zend\View\Model\ViewModel;
+use EcampCore\Service\CampService;
 
 class IndexController 
 	extends BaseController
 {
 
 	public function indexAction(){
-		
-		/* @var EcampCore\Service\CampService */
-		$campService = $this->getServiceLocator()->get('EcampCore\Service\Camp');
-		die( $campService->Get() );
+		die( $this->getServiceLocator()->get('EcampCore\Service\Camp')->Get() );
 		
 		return new ViewModel();
 	}

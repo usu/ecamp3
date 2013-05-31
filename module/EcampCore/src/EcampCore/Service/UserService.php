@@ -17,6 +17,12 @@ class UserService
 	public function _setupAcl(){
 	}
 	
+	public function __construct(\Doctrine\ORM\EntityManager $em)
+	{
+		$this->em = $em;
+	}
+	
+	
 	public function Get($id)
 	{
 		$user = $this->getEM()->find('EcampCore\Entity\User',$id);
