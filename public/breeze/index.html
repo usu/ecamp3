@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+
+    <title>Breeze Ecamp API with AngularJs</title>
+    <link rel="stylesheet" href="Content/toastr.css" />
+    <link rel="stylesheet" href="Content/app.css" />
+</head>
+<body data-ng-app="app">
+    <div id="applicationHost" data-ng-controller="EcampCtrl" class="ng-cloak">
+        <header>
+            <h2>Ecamp API</h2>
+        </header>
+        
+        <div class="mainbody">
+            <div data-ng-show="!camps.length" class="camp">... loading camps ...</div>
+            <div data-ng-repeat="camp in camps" class="camp">
+                <input type="checkbox" data-ng-model="camp.showEvents" data-ng-click="getEvents(camp)" style="display:inline-block; vertical-align:top;" />
+                <div style="display:inline-block;">
+	                <b>{{camp.name}} </b><br />
+	                {{camp.title}}<br /> 
+	                {{camp.start}}<br /> 
+	                {{camp.end}}<br />
+	                <span data-ng-show="camp.isLoading"> ... (loading events)...</span>
+	                <div data-ng-show="camp.showEvents && !camp.isLoading" class="events">
+	                	<ul>
+		                    <li data-ng-repeat="event in camp.events | orderBy: 'title'">
+		                        {{event.title}}
+		                    </li>
+	                    </ul>
+	                </div>
+	             </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3rd party libraries -->
+    <script src="Scripts/jquery-2.0.3.min.js"></script>
+    <script src="Scripts/q.js"></script>
+    <script src="Scripts/breeze.debug.js"></script>
+    <script src="Scripts/toastr.js"></script>
+    <script src="Scripts/angular.js"></script>
+
+    <!-- App libraries -->
+    <script src="app/controller.js"></script>
+    <script src="app/datacontext.js"></script>
+    <script src="app/model.js"></script>
+    <script src="app/jsonResultsAdapter.js"></script>
+    <script src="app/logger.js"></script>
+
+</body>
+</html>

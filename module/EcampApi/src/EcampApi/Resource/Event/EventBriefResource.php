@@ -13,7 +13,8 @@ class EventBriefResource extends HalResource
         $object = array(
                 'id'				=> 	$entity->getId(),
                 'title'				=> 	$entity->getTitle(),
-                'category'			=>  new EventCategoryBriefResource($entity->getEventCategory())
+                'category'			=>  new EventCategoryBriefResource($entity->getEventCategory()),
+                'camp_id'			=>  $entity->getCamp()->getId()
                 );
 
         parent::__construct($object, $object['id']);
