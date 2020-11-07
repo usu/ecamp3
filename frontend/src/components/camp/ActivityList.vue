@@ -27,8 +27,13 @@ Lists all activity instances in a list view.
     </template>
 
     <template v-for="scheduleEntry in entries">
-      <v-list-item :key="scheduleEntry.id">
-        {{ scheduleEntry.id }} / {{ scheduleEntry.periodOffset }} / {{ scheduleEntry.startTime }}
+      <v-list-item
+        :key="scheduleEntry.id"
+        two-line>
+        <v-list-item-content>
+          <v-list-item-title>{{ scheduleEntry.id }}</v-list-item-title>
+          <v-list-item-subtitle>{{ $moment.utc(scheduleEntry.startTime) }} - {{ $moment.utc(scheduleEntry.endTime) }}</v-list-item-subtitle>
+        </v-list-item-content>
       </v-list-item>
     </template>
   </v-list>
@@ -36,7 +41,9 @@ Lists all activity instances in a list view.
 <script>
 import { scheduleEntryRoute } from '@/router'
 import { defineHelpers } from '@/components/scheduleEntry/dateHelperUTC'
+
 import ScheduleEntry from '@/models/ScheduleEntry'
+import Period from '@/models/Period'
 
 export default {
   name: 'ActivityList',
@@ -54,15 +61,12 @@ export default {
       return this.period().scheduleEntries().items.map((entry) => defineHelpers(entry, false))
     },
     entries () {
-      return ScheduleEntry.all()
+      return ScheduleEntry.query().with('period').get()
     }
   },
-  async mounted () {
-    await ScheduleEntry.api().get(`/schedule-entries?periodId=${this.period().id}`, {
-      dataTransformer: ({ data, headers }) => {
-        return data._embedded.items
-      }
-    })
+  async created () {
+    await Period.api().get(`/periods/${this.period().id}`)
+    await ScheduleEntry.api().get(`/schedule-entries?periodId=${this.period().id}`)
   },
   methods: {
     scheduleEntryLink (scheduleEntry) {

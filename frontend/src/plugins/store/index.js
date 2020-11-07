@@ -6,7 +6,9 @@ import lang from './lang'
 import axios from 'axios'
 import VuexORM from '@vuex-orm/core'
 import VuexORMAxios from '@vuex-orm/plugin-axios'
+
 import ScheduleEntry from '@/models/ScheduleEntry'
+import Period from '@/models/Period'
 
 Vue.use(Vuex)
 
@@ -17,6 +19,7 @@ VuexORM.use(VuexORMAxios, {
 
 const database = new VuexORM.Database()
 database.register(ScheduleEntry)
+database.register(Period)
 
 const store = new Vuex.Store({
   plugins: [VuexORM.install(database)],
