@@ -25,11 +25,18 @@ Lists all activity instances in a list view.
         </v-list-item-content>
       </v-list-item>
     </template>
+
+    <template v-for="scheduleEntry in entries">
+      <v-list-item :key="scheduleEntry.id">
+        {{ scheduleEntry.id }} / {{ scheduleEntry.periodOffset }} / {{ scheduleEntry.startTime }}
+      </v-list-item>
+    </template>
   </v-list>
 </template>
 <script>
 import { scheduleEntryRoute } from '@/router'
 import { defineHelpers } from '@/components/scheduleEntry/dateHelperUTC'
+import ScheduleEntry from '@/models/ScheduleEntry'
 
 export default {
   name: 'ActivityList',
@@ -45,7 +52,17 @@ export default {
     },
     scheduleEntries () {
       return this.period().scheduleEntries().items.map((entry) => defineHelpers(entry, false))
+    },
+    entries () {
+      return ScheduleEntry.all()
     }
+  },
+  async mounted () {
+    await ScheduleEntry.api().get(`/schedule-entries?periodId=${this.period().id}`, {
+      dataTransformer: ({ data, headers }) => {
+        return data._embedded.items
+      }
+    })
   },
   methods: {
     scheduleEntryLink (scheduleEntry) {
