@@ -10,6 +10,9 @@ use ApiPlatform\Core\Util\ClassInfoTrait;
 use App\Doctrine\Filter\ContentNodePeriodFilter;
 use App\Repository\ContentNodeRepository;
 use App\Util\EntityMap;
+use App\Validator\AssertJsonSchema;
+use App\Validator\ColumnLayout\AssertColumWidthsSumTo12;
+use App\Validator\ColumnLayout\AssertNoOrphanChildren;
 use App\Validator\ContentNode\AssertBelongsToSameRoot;
 use App\Validator\ContentNode\AssertNoLoop;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -34,6 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'post' => [
             'denormalization_context' => ['groups' => ['write', 'create']],
             'security_post_denormalize' => 'is_granted("CAMP_MEMBER", object) or is_granted("CAMP_MANAGER", object)',
+            'validation_groups' => [ContentNode::class, 'validationGroupsPost'],
         ],
     ],
     itemOperations: [
@@ -41,6 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'patch' => [
             'denormalization_context' => ['groups' => ['write', 'update']],
             'security' => 'is_granted("CAMP_MEMBER", object) or is_granted("CAMP_MANAGER", object)',
+            'validation_groups' => [ContentNode::class, 'validationGroupsPatch'],
         ],
         'delete' => ['security' => '(is_granted("CAMP_MEMBER", object) or is_granted("CAMP_MANAGER", object)) and object.owner === null'], // disallow delete when contentNode is a root node
     ],
@@ -52,6 +57,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ContentNodeRepository::class)]
 class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterface, CopyFromPrototypeInterface {
     use ClassInfoTrait;
+
+    public const COLUMNS_SCHEMA = [
+        'type' => 'array',
+        'items' => [
+            'type' => 'object',
+            'additionalProperties' => false,
+            'required' => ['slot', 'width'],
+            'properties' => [
+                'slot' => [
+                    'type' => 'string',
+                    'pattern' => '^[1-9][0-9]*$',
+                ],
+                'width' => [
+                    'type' => 'integer',
+                    'minimum' => 3,
+                    'maximum' => 12,
+                ],
+            ],
+        ],
+    ];
 
     /**
      * The content node that is the root of the content node tree. Refers to itself in case this
@@ -98,8 +123,13 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
      * Holds the actual data of the content node.
      */
     #[ApiProperty(example: ['text' => 'dummy text'])]
-     #[Groups(['read', 'write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+
+    #[AssertJsonSchema(schema: self::COLUMNS_SCHEMA, groups: ['ColumnLayout'])]
+    #[AssertColumWidthsSumTo12(groups: ['ColumnLayout'])]
+    #[AssertNoOrphanChildren(groups: ['ColumnLayout'])]
+
     public ?array $data = null;
 
     /**
@@ -146,6 +176,36 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
         parent::__construct();
         $this->children = new ArrayCollection();
         $this->rootDescendants = new ArrayCollection();
+    }
+
+    /**
+     * Return dynamic validation groups.
+     *
+     * @return string[]
+     */
+    public static function validationGroupsPost(self $contentNode) {
+        switch ($contentNode->getContentTypeName()) {
+            case 'ColumnLayout':
+                return ['Default', 'create', 'ColumnLayout'];
+
+            default:
+                return ['Default', 'create'];
+        }
+    }
+
+    /**
+     * Return dynamic validation groups.
+     *
+     * @return string[]
+     */
+    public static function validationGroupsPatch(self $contentNode) {
+        switch ($contentNode->getContentTypeName()) {
+            case 'ColumnLayout':
+                return ['Default', 'update', 'ColumnLayout'];
+
+            default:
+                return ['Default', 'update'];
+        }
     }
 
     /**
