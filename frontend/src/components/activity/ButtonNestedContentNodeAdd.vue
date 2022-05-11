@@ -84,7 +84,7 @@ export default {
     async addContentNode (contentType) {
       this.isAdding = true
       try {
-        await this.api.post(await this.api.href(contentType, 'contentNodes'), { // this.api.href resolves to the correct endpoint for this contentType (e.g. '/content_node/single_texts?contentType=...')
+        await this.api.post(await this.api.href(this.api.get(), 'contentNodes'), {
           parent: this.parentContentNode._meta.self,
           contentType: contentType._meta.self,
           slot: this.slotName

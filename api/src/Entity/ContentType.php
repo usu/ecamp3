@@ -42,16 +42,7 @@ class ContentType extends BaseEntity {
     public bool $active = true;
 
     /**
-     * The name of the internal PHP class that implements all custom behaviour of content nodes
-     * of this type.
-     */
-    #[ApiProperty(writable: false)]
-    #[ORM\Column(type: 'text')]
-    public ?string $entityClass = null;
-
-    /**
-     * Internal configuration for the entityClass, in case the same entityClass is reused
-     * for different content types.
+     * Internal configuration of the content type.
      */
     #[ApiProperty(writable: false)]
     #[ORM\Column(type: 'json', nullable: true)]
@@ -67,20 +58,5 @@ class ContentType extends BaseEntity {
     public function __construct() {
         parent::__construct();
         $this->categories = new ArrayCollection();
-    }
-
-    /**
-     * API endpoint link for creating new entities of type entityClass.
-     */
-    #[Groups(['read'])]
-    #[ApiProperty(
-        example: '/content_node/column_layouts?contentType=%2Fcontent_types%2F1a2b3c4d',
-        openapiContext: [
-            'type' => 'array',
-            'format' => 'iri-reference',
-        ]
-    )]
-    public function getContentNodes(): array {
-        return []; // empty here; actual content is filled/decorated in ContentTypeNormalizer
     }
 }

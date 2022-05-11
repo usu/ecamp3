@@ -31,6 +31,15 @@ class ContentNodeDataPersister extends AbstractDataPersister {
         $data->parent->addChild($data);
         $data->parent->root->addRootDescendant($data);
 
+        switch ($data->getContentTypeName()) {
+            case 'ColumnLayout':
+                $data->data = ['columns' => [['slot' => '1', 'width' => 12]]];
+
+                break;
+
+            default:
+        }
+
         return $data;
     }
 }

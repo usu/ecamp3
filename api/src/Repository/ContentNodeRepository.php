@@ -16,8 +16,8 @@ use Doctrine\ORM\QueryBuilder;
 class ContentNodeRepository extends SortableServiceEntityRepository implements CanFilterByUserInterface {
     use FiltersByContentNode;
 
-    public function __construct(EntityManagerInterface $em, string $entityClass = ContentNode::class) {
-        parent::__construct($em, $entityClass);
+    public function __construct(EntityManagerInterface $em) {
+        parent::__construct($em, ContentNode::class);
     }
 
     public function filterByUser(QueryBuilder $queryBuilder, User $user): void {

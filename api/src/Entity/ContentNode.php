@@ -59,20 +59,27 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     use ClassInfoTrait;
 
     public const COLUMNS_SCHEMA = [
-        'type' => 'array',
-        'items' => [
-            'type' => 'object',
-            'additionalProperties' => false,
-            'required' => ['slot', 'width'],
-            'properties' => [
-                'slot' => [
-                    'type' => 'string',
-                    'pattern' => '^[1-9][0-9]*$',
-                ],
-                'width' => [
-                    'type' => 'integer',
-                    'minimum' => 3,
-                    'maximum' => 12,
+        'type' => 'object',
+        'additionalProperties' => false,
+        'required' => ['columns'],
+        'properties' => [
+            'columns' => [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'additionalProperties' => false,
+                    'required' => ['slot', 'width'],
+                    'properties' => [
+                        'slot' => [
+                            'type' => 'string',
+                            'pattern' => '^[1-9][0-9]*$',
+                        ],
+                        'width' => [
+                            'type' => 'integer',
+                            'minimum' => 3,
+                            'maximum' => 12,
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -126,9 +133,13 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'json', nullable: true, options: ['jsonb' => true])]
 
-    #[AssertJsonSchema(schema: self::COLUMNS_SCHEMA, groups: ['ColumnLayout'])]
-    #[AssertColumWidthsSumTo12(groups: ['ColumnLayout'])]
-    #[AssertNoOrphanChildren(groups: ['ColumnLayout'])]
+    #[Assert\Sequentially(constraints: [
+        new AssertJsonSchema(schema: self::COLUMNS_SCHEMA),
+        new AssertColumWidthsSumTo12(),
+        new AssertNoOrphanChildren(),
+    ], groups: ['ColumnLayout'])]
+
+    #[Assert\IsNull(groups: ['create'])]
 
     public ?array $data = null;
 
@@ -185,9 +196,6 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
      */
     public static function validationGroupsPost(self $contentNode) {
         switch ($contentNode->getContentTypeName()) {
-            case 'ColumnLayout':
-                return ['Default', 'create', 'ColumnLayout'];
-
             default:
                 return ['Default', 'create'];
         }
