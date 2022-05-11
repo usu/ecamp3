@@ -11,7 +11,6 @@ use App\Doctrine\Filter\ContentNodePeriodFilter;
 use App\Repository\ContentNodeRepository;
 use App\Util\EntityMap;
 use App\Validator\ContentNode\AssertBelongsToSameRoot;
-use App\Validator\ContentNode\AssertContentTypeCompatible;
 use App\Validator\ContentNode\AssertNoLoop;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -29,13 +28,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(
     collectionOperations: [
-        'get' => ['security' => 'is_authenticated()'],
+        'get' => [
+            'security' => 'is_authenticated()',
+        ],
+        'post' => [
+            'denormalization_context' => ['groups' => ['write', 'create']],
+            'security_post_denormalize' => 'is_granted("CAMP_MEMBER", object) or is_granted("CAMP_MANAGER", object)',
+        ],
     ],
     itemOperations: [
         'get' => ['security' => 'is_granted("CAMP_COLLABORATOR", object) or is_granted("CAMP_IS_PROTOTYPE", object)'],
+        'patch' => [
+            'denormalization_context' => ['groups' => ['write', 'update']],
+            'security' => 'is_granted("CAMP_MEMBER", object) or is_granted("CAMP_MANAGER", object)',
+        ],
+        'delete' => ['security' => '(is_granted("CAMP_MEMBER", object) or is_granted("CAMP_MANAGER", object)) and object.owner === null'], // disallow delete when contentNode is a root node
     ],
     denormalizationContext: ['groups' => ['write']],
-    normalizationContext: ['groups' => ['read']]
+    normalizationContext: ['groups' => ['read']],
 )]
 #[ApiFilter(SearchFilter::class, properties: ['contentType', 'root'])]
 #[ApiFilter(ContentNodePeriodFilter::class)]
@@ -87,7 +97,7 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     /**
      * Holds the actual data of the content node.
      */
-    #[ApiProperty(example: [['text' => 'dummy text']])]
+    #[ApiProperty(example: ['text' => 'dummy text'])]
      #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'json', nullable: true, options: ['jsonb' => true])]
     public ?array $data = null;
@@ -128,7 +138,6 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
      */
     #[ApiProperty(example: '/content_types/1a2b3c4d')]
     #[Groups(['read', 'create'])]
-    #[AssertContentTypeCompatible]
     #[ORM\ManyToOne(targetEntity: ContentType::class)]
     #[ORM\JoinColumn(nullable: false)]
     public ?ContentType $contentType = null;

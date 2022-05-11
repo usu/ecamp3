@@ -33,6 +33,11 @@ class ActivityDataPersister extends AbstractDataPersister {
         }
 
         $rootContentNode = new ContentNode();
+        $rootContentNode->contentType = $this->em
+            ->getRepository(ContentType::class)
+            ->findOneBy(['name' => 'ColumnLayout'])
+        ;
+        $rootContentNode->data = [['slot' => '1', 'width' => 12]];
         $data->setRootContentNode($rootContentNode);
 
         // deep copy from category root node
