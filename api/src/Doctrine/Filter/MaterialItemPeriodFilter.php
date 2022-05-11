@@ -6,7 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Activity;
-use App\Entity\ContentNode\MaterialNode;
+use App\Entity\ContentNode;
 use App\Entity\MaterialItem;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -72,7 +72,7 @@ final class MaterialItemPeriodFilter extends AbstractContextAwareFilter {
         $rootAlias = $queryBuilder->getRootAliases()[0];
 
         /** @var EntityRepository $materialNodeRepository */
-        $materialNodeRepository = $this->getManagerRegistry()->getRepository(MaterialNode::class);
+        $materialNodeRepository = $this->getManagerRegistry()->getRepository(ContentNode::class);
         $queryBuilder->andWhere($queryBuilder->expr()->orX(
              // item directly attached to Period
             $queryBuilder->expr()->eq("{$rootAlias}.period", ":{$periodParameterName}"),

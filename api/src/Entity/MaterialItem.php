@@ -7,7 +7,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Doctrine\Filter\MaterialItemPeriodFilter;
-use App\Entity\ContentNode\MaterialNode;
 use App\Repository\MaterialItemRepository;
 use App\Util\EntityMap;
 use App\Validator\AssertBelongsToSameCamp;
@@ -68,9 +67,9 @@ class MaterialItem extends BaseEntity implements BelongsToCampInterface, CopyFro
     #[AssertEitherisNull(other: 'period')]
     #[ApiProperty(example: '/content_node/material_nodes/1a2b3c4d')]
     #[Groups(['read', 'write'])]
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\ContentNode\MaterialNode', inversedBy: 'materialItems')]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\ContentNode', inversedBy: 'materialItems')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    public ?MaterialNode $materialNode = null;
+    public ?ContentNode $materialNode = null;
 
     /**
      * The name of the item that is required.

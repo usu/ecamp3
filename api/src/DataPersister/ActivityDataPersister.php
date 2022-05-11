@@ -5,7 +5,7 @@ namespace App\DataPersister;
 use App\DataPersister\Util\AbstractDataPersister;
 use App\DataPersister\Util\DataPersisterObservable;
 use App\Entity\Activity;
-use App\Entity\ContentNode\ColumnLayout;
+use App\Entity\ContentNode;
 use App\Util\EntityMap;
 
 class ActivityDataPersister extends AbstractDataPersister {
@@ -25,14 +25,14 @@ class ActivityDataPersister extends AbstractDataPersister {
         $data->camp = $data->category?->camp;
 
         if (!isset($data->category?->rootContentNode)) {
-            throw new \UnexpectedValueException('Property rootContentNode of provided category is null. Object of type '.ColumnLayout::class.' expected.');
+            throw new \UnexpectedValueException('Property rootContentNode of provided category is null. Object of type '.ContentNode::class.' expected.');
         }
 
-        if (!is_a($data->category->rootContentNode, ColumnLayout::class)) {
-            throw new \UnexpectedValueException('Property rootContentNode of provided category is of wrong type. Object of type '.ColumnLayout::class.' expected.');
+        if (!is_a($data->category->rootContentNode, ContentNode::class)) {
+            throw new \UnexpectedValueException('Property rootContentNode of provided category is of wrong type. Object of type '.ContentNode::class.' expected.');
         }
 
-        $rootContentNode = new ColumnLayout();
+        $rootContentNode = new ContentNode();
         $data->setRootContentNode($rootContentNode);
 
         // deep copy from category root node

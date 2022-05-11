@@ -6,7 +6,7 @@ use App\DataPersister\Util\AbstractDataPersister;
 use App\DataPersister\Util\DataPersisterObservable;
 use App\Entity\BaseEntity;
 use App\Entity\Category;
-use App\Entity\ContentNode\ColumnLayout;
+use App\Entity\ContentNode;
 use App\Entity\ContentType;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -24,7 +24,7 @@ class CategoryDataPersister extends AbstractDataPersister {
     public function beforeCreate($data): BaseEntity {
         // TODO implement actual prototype cloning and strategy classes, this is just a dummy implementation to
         //      fill the non-nullable field for Doctrine
-        $rootContentNode = new ColumnLayout();
+        $rootContentNode = new ContentNode();
         $rootContentNode->contentType = $this->em
             ->getRepository(ContentType::class)
             ->findOneBy(['name' => 'ColumnLayout'])

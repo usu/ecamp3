@@ -3,7 +3,6 @@
 namespace App\Validator\ColumnLayout;
 
 use App\Entity\ContentNode;
-use App\Entity\ContentNode\ColumnLayout;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
@@ -18,7 +17,7 @@ class AssertNoOrphanChildrenValidator extends ConstraintValidator {
         /** @var ColumnLayout $columnLayout */
         $columnLayout = $this->context->getObject();
 
-        if (!($columnLayout instanceof ColumnLayout)) {
+        if (!($columnLayout instanceof ContentNode)) {
             throw new InvalidArgumentException('AssertNoOrphanChildren is only valid inside a ColumnLayout object');
         }
 

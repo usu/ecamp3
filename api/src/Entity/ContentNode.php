@@ -8,7 +8,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Util\ClassInfoTrait;
 use App\Doctrine\Filter\ContentNodePeriodFilter;
-use App\Entity\ContentNode\ColumnLayout;
 use App\Repository\ContentNodeRepository;
 use App\Util\EntityMap;
 use App\Validator\ContentNode\AssertBelongsToSameRoot;
@@ -41,9 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(SearchFilter::class, properties: ['contentType', 'root'])]
 #[ApiFilter(ContentNodePeriodFilter::class)]
 #[ORM\Entity(repositoryClass: ContentNodeRepository::class)]
-#[ORM\InheritanceType('JOINED')]
-#[ORM\DiscriminatorColumn(name: 'strategy', type: 'string')]
-abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterface, CopyFromPrototypeInterface {
+class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterface, CopyFromPrototypeInterface {
     use ClassInfoTrait;
 
     /**
@@ -53,9 +50,16 @@ abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTre
     #[ApiProperty(writable: false, example: '/content_nodes/1a2b3c4d')]
     #[Gedmo\SortableGroup] // this is needed to avoid that all root nodes are in the same sort group (parent:null, slot: '')
     #[Groups(['read'])]
-    #[ORM\ManyToOne(targetEntity: ColumnLayout::class, inversedBy: 'rootDescendants')]
+    #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'rootDescendants')]
     #[ORM\JoinColumn(nullable: true)] // TODO make not null in the DB using a migration, and get fixtures to run
-    public ?ColumnLayout $root = null;
+    public ?ContentNode $root = null;
+
+    /**
+     * All content nodes that are part of this content node tree.
+     */
+    #[ApiProperty(readable: false, writable: false)]
+    #[ORM\OneToMany(targetEntity: ContentNode::class, mappedBy: 'root')]
+    public Collection $rootDescendants;
 
     /**
      * The parent to which this content node belongs. Is null in case this content node is the
@@ -79,6 +83,14 @@ abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTre
     #[Groups(['read'])]
     #[ORM\OneToMany(targetEntity: ContentNode::class, mappedBy: 'parent', cascade: ['persist'])]
     public Collection $children;
+
+    /**
+     * Holds the actual data of the content node.
+     */
+    #[ApiProperty(example: [['text' => 'dummy text']])]
+     #[Groups(['read', 'write'])]
+    #[ORM\Column(type: 'json', nullable: true, options: ['jsonb' => true])]
+    public ?array $data = null;
 
     /**
      * The name of the slot in the parent in which this content node resides. The valid slot names
@@ -124,6 +136,7 @@ abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTre
     public function __construct() {
         parent::__construct();
         $this->children = new ArrayCollection();
+        $this->rootDescendants = new ArrayCollection();
     }
 
     /**
@@ -139,7 +152,7 @@ abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTre
      * The entity that owns the content node tree that this content node resides in.
      */
     #[ApiProperty(readable: false)]
-    public function getRoot(): ?ColumnLayout {
+    public function getRoot(): ?ContentNode {
         // New created ContentNodes have root == this.
         // Therefore we use the root of the parent-node.
         if (null === $this->root && null !== $this->parent) {
@@ -147,6 +160,33 @@ abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTre
         }
 
         return $this->root;
+    }
+
+    /**
+     * @return ContentNode[]
+     */
+    public function getRootDescendants(): array {
+        return $this->rootDescendants->getValues();
+    }
+
+    public function addRootDescendant(ContentNode $rootDescendant): self {
+        if (!$this->rootDescendants->contains($rootDescendant)) {
+            $this->rootDescendants[] = $rootDescendant;
+            $rootDescendant->root = $this;
+        }
+
+        return $this;
+    }
+
+    public function removeRootDescendant(ContentNode $rootDescendant): self {
+        if ($this->rootDescendants->removeElement($rootDescendant)) {
+            // reset the owning side (unless already changed)
+            if ($rootDescendant->root === $this) {
+                $rootDescendant->root = null;
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -188,6 +228,7 @@ abstract class ContentNode extends BaseEntity implements BelongsToContentNodeTre
         $this->instanceName = $prototype->instanceName;
         $this->slot = $prototype->slot;
         $this->position = $prototype->position;
+        $this->data = $prototype->data;
 
         // deep copy children
         foreach ($prototype->getChildren() as $childPrototype) {

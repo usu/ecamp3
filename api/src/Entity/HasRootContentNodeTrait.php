@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Entity\ContentNode\ColumnLayout;
+use App\Entity\ContentNode;
 use App\Serializer\Normalizer\RelatedCollectionLink;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,11 +16,11 @@ trait HasRootContentNodeTrait {
      */
     #[Assert\DisableAutoMapping]
     #[ApiProperty(writable: false, readableLink: true, example: '/content_nodes/1a2b3c4d')]
-    #[ORM\OneToOne(targetEntity: ColumnLayout::class, cascade: ['persist'])]
+    #[ORM\OneToOne(targetEntity: ContentNode::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, unique: true, onDelete: 'cascade')]
-    public ?ColumnLayout $rootContentNode = null;
+    public ?ContentNode $rootContentNode = null;
 
-    public function setRootContentNode(?ColumnLayout $rootContentNode) {
+    public function setRootContentNode(?ContentNode $rootContentNode) {
         if (null !== $rootContentNode) {
             // make content node a root node
             $rootContentNode->addRootDescendant($rootContentNode);
@@ -31,7 +31,7 @@ trait HasRootContentNodeTrait {
 
     #[Assert\DisableAutoMapping]
     #[Groups(['read'])]
-    public function getRootContentNode(): ?ColumnLayout {
+    public function getRootContentNode(): ?ContentNode {
         // Getter is here to add annotations to parent class property
         return $this->rootContentNode;
     }
