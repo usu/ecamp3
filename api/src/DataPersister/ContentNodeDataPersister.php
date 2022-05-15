@@ -46,8 +46,20 @@ class ContentNodeDataPersister extends AbstractDataPersister {
 
                 break;
 
-            case 'Storybaord':
+            case 'Storyboard':
                 $data->data = ['sections' => []];
+
+                break;
+
+            case 'LAThematicArea':
+                // copy options from ContentType config
+                $options = [];
+                foreach ($data->contentType->jsonConfig['items'] as $item) {
+                    $options[$item] = [
+                        'checked' => false,
+                    ];
+                }
+                $data->data = ['options' => $options];
 
                 break;
 
@@ -79,6 +91,10 @@ class ContentNodeDataPersister extends AbstractDataPersister {
                     $section = $this->cleanHTMLFilter->applyTo($section, 'column3');
                 }
 
+                break;
+
+            case 'LAThematicArea':
+                // TO DO: consider verify accidental removal/addition of keys (or keep this responsibility with frontend?)
                 break;
 
             default:
