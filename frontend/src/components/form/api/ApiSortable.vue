@@ -11,9 +11,10 @@
     @end="dragging = false">
     <!-- disable transition for drag&drop as draggable already comes with its own anmations -->
     <transition-group :name="!dragging ? 'flip-list' : null" tag="div">
-      <div v-for="entity in locallySortedEntities" :key="entity._meta.self">
+      <div v-for="(item, key) in items" :key="key">
         <slot
-          :entity="entity"
+          :itemKey="key"
+          :item="item"
           :on="eventHandlers" />
       </div>
     </transition-group>
@@ -22,7 +23,7 @@
 
 <script>
 import draggable from 'vuedraggable'
-import { isEqual } from 'lodash'
+// import { isEqual } from 'lodash'
 
 export default {
   name: 'ApiSortable',
@@ -31,7 +32,7 @@ export default {
   },
   props: {
     /* reference to sortable API collection */
-    collection: { type: Function, required: true },
+    items: { type: Object, required: true },
     disabled: { type: Boolean, default: false }
   },
   data () {
@@ -48,6 +49,7 @@ export default {
     }
   },
   computed: {
+    /*
     // retrieve all relevant entities from external (incl. filtering and sorting)
     entities () {
       return this.collection().items.sort((a, b) => {
@@ -65,8 +67,10 @@ export default {
     locallySortedEntities () {
       return this.sorting.hrefList.map(href => this.api.get(href))
     }
+    */
   },
   watch: {
+    /*
     entities: {
       handler: function (entities) {
         const hrefList = entities.map(entry => entry._meta.self)
@@ -84,6 +88,7 @@ export default {
       },
       immediate: true
     }
+    */
   },
   methods: {
     async moveUp (entity) {

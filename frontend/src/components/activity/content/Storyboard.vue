@@ -14,12 +14,12 @@
         <v-col cols="1" />
       </v-row>
 
-      <api-sortable v-slot="sortable" :disabled="layoutMode || disabled" :collection="sections">
-        <api-form :entity="sortable.entity">
+      <api-sortable v-slot="sortable" :disabled="layoutMode || disabled" :items="sections">
+        <api-form :entity="contentNode">
           <v-row dense>
             <v-col cols="2">
               <api-textarea
-                fieldname="column1"
+                :fieldname="`data.sections[${sortable.itemKey}].column1`"
                 auto-grow
                 rows="2"
                 :disabled="layoutMode || disabled"
@@ -27,7 +27,7 @@
             </v-col>
             <v-col cols="7">
               <api-textarea
-                fieldname="column2"
+                :fieldname="`data.sections[${sortable.itemKey}].column2`"
                 auto-grow
                 rows="4"
                 :disabled="layoutMode || disabled"
@@ -35,13 +35,14 @@
             </v-col>
             <v-col cols="2">
               <api-textarea
-                fieldname="column3"
+                :fieldname="`data.sections[${sortable.itemKey}].column3`"
                 auto-grow
                 rows="2"
                 :disabled="layoutMode || disabled"
                 :filled="layoutMode" />
             </v-col>
             <v-col cols="1">
+              <!--
               <v-container v-if="!layoutMode && !disabled" class="ma-0 pa-0">
                 <v-row no-gutters>
                   <v-col cols="6">
@@ -77,6 +78,7 @@
                   </v-col>
                 </v-row>
               </v-container>
+              -->
             </v-col>
           </v-row>
         </api-form>
@@ -108,6 +110,8 @@ import CardContentNode from '@/components/activity/CardContentNode.vue'
 import { contentNodeMixin } from '@/mixins/contentNodeMixin.js'
 import ApiSortable from '@/components/form/api/ApiSortable.vue'
 
+import { v4 as uuidv4 } from 'uuid'
+
 export default {
   name: 'Storyboard',
   components: {
@@ -128,15 +132,25 @@ export default {
   },
   computed: {
     sections () {
-      return this.api.get(this.contentNode).sections
+      return this.api.get(this.contentNode).data.sections
     }
   },
   methods: {
     async addSection () {
       this.isAdding = true
+
+      const sectionId = uuidv4()
       try {
-        await this.api.post(this.contentNode.sections(), {
-          storyboard: this.contentNode._meta.self
+        await this.contentNode.$patch({
+          data: {
+            sections: {
+              [sectionId]: {
+                column1: '',
+                column2: '',
+                column3: ''
+              }
+            }
+          }
         })
 
         await this.refreshContent() // refresh node content (reloading section array)

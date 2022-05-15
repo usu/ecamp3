@@ -58,6 +58,7 @@ class ContentNodeDataPersister extends AbstractDataPersister {
     public function beforeUpdate($data): ContentNode {
         switch ($data->getContentTypeName()) {
             case 'ColumnLayout':
+                // TODO: cleanHTMLFilter for column1,column2,column3
                 break;
 
             case 'Notes':
