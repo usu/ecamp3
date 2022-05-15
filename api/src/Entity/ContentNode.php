@@ -85,6 +85,17 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
         ],
     ];
 
+    public const SINGLETEXT_SCHEMA = [
+        'type' => 'object',
+        'additionalProperties' => false,
+        'required' => ['text'],
+        'properties' => [
+            'text' => [
+                'type' => 'string',
+            ],
+        ],
+    ];
+
     /**
      * The content node that is the root of the content node tree. Refers to itself in case this
      * content node is the root.
@@ -139,7 +150,9 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
         new AssertNoOrphanChildren(),
     ], groups: ['ColumnLayout'])]
 
-    #[Assert\IsNull(groups: ['create'])]
+    #[AssertJsonSchema(schema: self::SINGLETEXT_SCHEMA, groups: ['SingleText'])]
+
+    #[Assert\IsNull(groups: ['create'])] // create with empty data; default value is populated by ContentNodeDataPersister
 
     public ?array $data = null;
 
@@ -210,6 +223,11 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
         switch ($contentNode->getContentTypeName()) {
             case 'ColumnLayout':
                 return ['Default', 'update', 'ColumnLayout'];
+
+            case 'Notes':
+            case 'SafetyConcept':
+            case 'Storycontext':
+                return ['Default', 'update', 'SingleText'];
 
             default:
                 return ['Default', 'update'];
