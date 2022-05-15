@@ -96,6 +96,37 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
         ],
     ];
 
+    public const STORYBOARD_SCHEMA = [
+        'type' => 'object',
+        'additionalProperties' => false,
+        'required' => ['sections'],
+        'properties' => [
+            'columns' => [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'additionalProperties' => false,
+                    'required' => ['column1', 'column2', 'column3', 'position'],
+                    'properties' => [
+                        'column1' => [
+                            'type' => 'string',
+                        ],
+                        'column2' => [
+                            'type' => 'string',
+                        ],
+                        'column3' => [
+                            'type' => 'string',
+                        ],
+                        'position' => [
+                            'type' => 'integer',
+                            'minimum' => 1,
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+
     /**
      * The content node that is the root of the content node tree. Refers to itself in case this
      * content node is the root.
@@ -151,6 +182,9 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     ], groups: ['ColumnLayout'])]
 
     #[AssertJsonSchema(schema: self::SINGLETEXT_SCHEMA, groups: ['SingleText'])]
+
+    // TODO: fix next line (same attribute is not allowed twice --> move validation to Data Persister?)
+    // #[AssertJsonSchema(schema: self::STORYBOARD_SCHEMA, groups: ['Storyboard'])]
 
     #[Assert\IsNull(groups: ['create'])] // create with empty data; default value is populated by ContentNodeDataPersister
 
@@ -228,6 +262,9 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
             case 'SafetyConcept':
             case 'Storycontext':
                 return ['Default', 'update', 'SingleText'];
+
+            case 'Storyboard':
+                return ['Default', 'update', 'Storyboard'];
 
             default:
                 return ['Default', 'update'];
@@ -380,6 +417,7 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
             } elseif (is_null($value)) {
                 unset($merged[$key]); // null values can be used to remove keys/elements from the structure
             } else {
+                // TODO: Consider/discuss to apply CleanHTMLFilter cirectly here for all string values
                 $merged[$key] = $value;
             }
         }

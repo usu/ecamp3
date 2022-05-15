@@ -46,6 +46,11 @@ class ContentNodeDataPersister extends AbstractDataPersister {
 
                 break;
 
+            case 'Storybaord':
+                $data->data = ['sections' => []];
+
+                break;
+
             default:
         }
 
@@ -58,13 +63,21 @@ class ContentNodeDataPersister extends AbstractDataPersister {
     public function beforeUpdate($data): ContentNode {
         switch ($data->getContentTypeName()) {
             case 'ColumnLayout':
-                // TODO: cleanHTMLFilter for column1,column2,column3
                 break;
 
             case 'Notes':
             case 'SafetyConcept':
             case 'Storycontext':
                 $data->data = $this->cleanHTMLFilter->applyTo($data->data, 'text');
+
+                break;
+
+            case 'Storyboard':
+                foreach ($data->data['sections'] as &$section) {
+                    $section = $this->cleanHTMLFilter->applyTo($section, 'column1');
+                    $section = $this->cleanHTMLFilter->applyTo($section, 'column2');
+                    $section = $this->cleanHTMLFilter->applyTo($section, 'column3');
+                }
 
                 break;
 
