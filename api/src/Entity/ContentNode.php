@@ -377,6 +377,8 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
         foreach ($array2 as $key => &$value) {
             if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
                 $merged[$key] = self::array_merge_recursive_distinct($merged[$key], $value);
+            } elseif (is_null($value)) {
+                unset($merged[$key]); // null values can be used to remove keys/elements from the structure
             } else {
                 $merged[$key] = $value;
             }
