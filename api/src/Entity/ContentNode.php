@@ -225,7 +225,7 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     }
 
     public function setData(?array $data) {
-        $this->data = self::array_merge_recursive_distinct($this->data, $data);
+        $this->data = self::mergePatch($this->data, $data);
     }
 
     /**
@@ -334,20 +334,36 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
      * @author Daniel <daniel (at) danielsmedegaardbuus (dot) dk>
      * @author Gabriel Sobrinho <gabriel (dot) sobrinho (at) gmail (dot) com>
      */
-    public static function array_merge_recursive_distinct(array &$array1, array &$array2) {
-        $merged = $array1;
+    public static function mergePatch(array &$target, array &$patch) {
+        $merged = $target;
 
-        foreach ($array2 as $key => &$value) {
-            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                $merged[$key] = self::array_merge_recursive_distinct($merged[$key], $value);
-            } elseif (is_null($value)) {
-                unset($merged[$key]); // null values can be used to remove keys/elements from the structure
-            } else {
-                // TODO: Consider/discuss to apply CleanHTMLFilter cirectly here for all string values
-                $merged[$key] = $value;
+        foreach ($patch as $key => &$value) {
+            // null values can be used to remove keys/elements from the structure
+            if (is_null($value)) {
+                unset($merged[$key]);
+
+                continue;
             }
+
+            // associative arrays --> merge recursively
+            if (is_array($value) && self::isAssoc($value) && isset($merged[$key]) && is_array($merged[$key])) {
+                $merged[$key] = self::mergePatch($merged[$key], $value);
+
+                continue;
+            }
+
+            // primitve values or sequential/numeric arrays (true JSON arrays)
+            $merged[$key] = $value; // TODO: Consider/discuss to apply CleanHTMLFilter cirectly here for all string values
         }
 
         return $merged;
+    }
+
+    public static function isAssoc(array $arr) {
+        if ([] === $arr) {
+            return false;
+        }
+
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 }
