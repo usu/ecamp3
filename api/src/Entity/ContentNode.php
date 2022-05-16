@@ -10,11 +10,12 @@ use ApiPlatform\Core\Util\ClassInfoTrait;
 use App\Doctrine\Filter\ContentNodePeriodFilter;
 use App\Repository\ContentNodeRepository;
 use App\Util\EntityMap;
-use App\Validator\AssertJsonSchema;
-use App\Validator\ColumnLayout\AssertColumWidthsSumTo12;
-use App\Validator\ColumnLayout\AssertNoOrphanChildren;
 use App\Validator\ContentNode\AssertBelongsToSameRoot;
 use App\Validator\ContentNode\AssertNoLoop;
+use App\Validator\ContentNode\ColumnLayoutRequirements;
+use App\Validator\ContentNode\MultiSelectRequirements;
+use App\Validator\ContentNode\SingleTextRequirements;
+use App\Validator\ContentNode\StoryboardRequirements;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -57,75 +58,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ContentNodeRepository::class)]
 class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterface, CopyFromPrototypeInterface {
     use ClassInfoTrait;
-
-    public const COLUMNS_SCHEMA = [
-        'type' => 'object',
-        'additionalProperties' => false,
-        'required' => ['columns'],
-        'properties' => [
-            'columns' => [
-                'type' => 'array',
-                'items' => [
-                    'type' => 'object',
-                    'additionalProperties' => false,
-                    'required' => ['slot', 'width'],
-                    'properties' => [
-                        'slot' => [
-                            'type' => 'string',
-                            'pattern' => '^[1-9][0-9]*$',
-                        ],
-                        'width' => [
-                            'type' => 'integer',
-                            'minimum' => 3,
-                            'maximum' => 12,
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ];
-
-    public const SINGLETEXT_SCHEMA = [
-        'type' => 'object',
-        'additionalProperties' => false,
-        'required' => ['text'],
-        'properties' => [
-            'text' => [
-                'type' => 'string',
-            ],
-        ],
-    ];
-
-    public const STORYBOARD_SCHEMA = [
-        'type' => 'object',
-        'additionalProperties' => false,
-        'required' => ['sections'],
-        'properties' => [
-            'columns' => [
-                'type' => 'array',
-                'items' => [
-                    'type' => 'object',
-                    'additionalProperties' => false,
-                    'required' => ['column1', 'column2', 'column3', 'position'],
-                    'properties' => [
-                        'column1' => [
-                            'type' => 'string',
-                        ],
-                        'column2' => [
-                            'type' => 'string',
-                        ],
-                        'column3' => [
-                            'type' => 'string',
-                        ],
-                        'position' => [
-                            'type' => 'integer',
-                            'minimum' => 1,
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ];
 
     /**
      * The content node that is the root of the content node tree. Refers to itself in case this
@@ -174,20 +106,11 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     #[ApiProperty(example: ['text' => 'dummy text'])]
     #[Groups(['read', 'write'])]
     #[ORM\Column(type: 'json', nullable: true, options: ['jsonb' => true])]
-
-    #[Assert\Sequentially(constraints: [
-        new AssertJsonSchema(schema: self::COLUMNS_SCHEMA),
-        new AssertColumWidthsSumTo12(),
-        new AssertNoOrphanChildren(),
-    ], groups: ['ColumnLayout'])]
-
-    #[AssertJsonSchema(schema: self::SINGLETEXT_SCHEMA, groups: ['SingleText'])]
-
-    // TODO: fix next line (same attribute is not allowed twice --> move validation to Data Persister?)
-    // #[AssertJsonSchema(schema: self::STORYBOARD_SCHEMA, groups: ['Storyboard'])]
-
+    #[ColumnLayoutRequirements(options: ['groups' => ['ColumnLayout']])]
+    #[SingleTextRequirements(options: ['groups' => ['SingleText']])]
+    #[StoryboardRequirements(options: ['groups' => ['Storyboard']])]
+    #[MultiSelectRequirements(options: ['groups' => ['MultiSelect']])]
     #[Assert\IsNull(groups: ['create'])] // create with empty data; default value is populated by ContentNodeDataPersister
-
     public ?array $data = null;
 
     /**
@@ -265,6 +188,9 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
 
             case 'Storyboard':
                 return ['Default', 'update', 'Storyboard'];
+
+            case 'LAThematicArea':
+                return ['Default', 'update', 'MultiSelect'];
 
             default:
                 return ['Default', 'update'];
