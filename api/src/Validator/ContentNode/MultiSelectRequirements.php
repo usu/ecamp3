@@ -15,13 +15,6 @@ class MultiSelectRequirements extends Compound {
         'properties' => [
             'options' => [
                 'type' => 'object',
-                /*
-                'patternProperties' => [
-                    // uuid4 key
-                    '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' => [
-                        '$ref' => '#/$defs/option',
-                    ],
-                ],*/
                 'additionalProperties' => ['$ref' => '#/$defs/option'],
             ],
         ],

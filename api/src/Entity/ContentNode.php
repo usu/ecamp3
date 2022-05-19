@@ -10,6 +10,7 @@ use ApiPlatform\Core\Util\ClassInfoTrait;
 use App\Doctrine\Filter\ContentNodePeriodFilter;
 use App\Repository\ContentNodeRepository;
 use App\Util\EntityMap;
+use App\Util\JsonMergePatch;
 use App\Validator\ContentNode\AssertBelongsToSameRoot;
 use App\Validator\ContentNode\AssertNoLoop;
 use App\Validator\ContentNode\ColumnLayoutRequirements;
@@ -225,7 +226,7 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
     }
 
     public function setData(?array $data) {
-        $this->data = self::mergePatch($this->data, $data);
+        $this->data = JsonMergePatch::mergePatch($this->data, $data);
     }
 
     /**
@@ -308,62 +309,5 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
 
             $childContentNode->copyFromPrototype($childPrototype, $entityMap);
         }
-    }
-
-    /**
-     * array_merge_recursive does indeed merge arrays, but it converts values with duplicate
-     * keys to arrays rather than overwriting the value in the first array with the duplicate
-     * value in the second array, as array_merge does. I.e., with array_merge_recursive,
-     * this happens (documented behavior):.
-     *
-     * array_merge_recursive(array('key' => 'org value'), array('key' => 'new value'));
-     *     => array('key' => array('org value', 'new value'));
-     *
-     * array_merge_recursive_distinct does not change the datatypes of the values in the arrays.
-     * Matching keys' values in the second array overwrite those in the first array, as is the
-     * case with array_merge, i.e.:
-     *
-     * array_merge_recursive_distinct(array('key' => 'org value'), array('key' => 'new value'));
-     *     => array('key' => array('new value'));
-     *
-     * Parameters are passed by reference, though only for performance reasons. They're not
-     * altered by this function.
-     *
-     * @return array
-     *
-     * @author Daniel <daniel (at) danielsmedegaardbuus (dot) dk>
-     * @author Gabriel Sobrinho <gabriel (dot) sobrinho (at) gmail (dot) com>
-     */
-    public static function mergePatch(array &$target, array &$patch) {
-        $merged = $target;
-
-        foreach ($patch as $key => &$value) {
-            // null values can be used to remove keys/elements from the structure
-            if (is_null($value)) {
-                unset($merged[$key]);
-
-                continue;
-            }
-
-            // associative arrays --> merge recursively
-            if (is_array($value) && self::isAssoc($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                $merged[$key] = self::mergePatch($merged[$key], $value);
-
-                continue;
-            }
-
-            // primitve values or sequential/numeric arrays (true JSON arrays)
-            $merged[$key] = $value; // TODO: Consider/discuss to apply CleanHTMLFilter cirectly here for all string values
-        }
-
-        return $merged;
-    }
-
-    public static function isAssoc(array $arr) {
-        if ([] === $arr) {
-            return false;
-        }
-
-        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 }
