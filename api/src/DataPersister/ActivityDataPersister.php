@@ -6,11 +6,14 @@ use App\DataPersister\Util\AbstractDataPersister;
 use App\DataPersister\Util\DataPersisterObservable;
 use App\Entity\Activity;
 use App\Entity\ContentNode;
+use App\Entity\ContentType;
 use App\Util\EntityMap;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityDataPersister extends AbstractDataPersister {
     public function __construct(
-        DataPersisterObservable $dataPersisterObservable
+        DataPersisterObservable $dataPersisterObservable,
+        private EntityManagerInterface $em,
     ) {
         parent::__construct(
             Activity::class,

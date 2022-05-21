@@ -2,12 +2,10 @@
 
 namespace App\DataPersister;
 
-use ApiPlatform\Core\Validator\ValidatorInterface as ApiValidatorInterface;
 use App\DataPersister\Util\AbstractDataPersister;
 use App\DataPersister\Util\DataPersisterObservable;
 use App\Entity\ContentNode;
 use App\InputFilter\CleanHTMLFilter;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ContentNodeDataPersister extends AbstractDataPersister {
     /**
@@ -15,8 +13,6 @@ class ContentNodeDataPersister extends AbstractDataPersister {
      */
     public function __construct(
         DataPersisterObservable $dataPersisterObservable,
-        private ValidatorInterface $validator,
-        private ApiValidatorInterface $apiValidator,
         private CleanHTMLFilter $cleanHTMLFilter
     ) {
         parent::__construct(

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Entity\ContentNode;
 use App\Serializer\Normalizer\RelatedCollectionLink;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;

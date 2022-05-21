@@ -14,10 +14,10 @@ class AssertNoOrphanChildrenValidator extends ConstraintValidator {
             throw new UnexpectedTypeException($constraint, AssertNoOrphanChildren::class);
         }
 
-        /** @var ColumnLayout $columnLayout */
-        $columnLayout = $this->context->getObject();
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->context->getObject();
 
-        if (!($columnLayout instanceof ContentNode)) {
+        if (!($contentNode instanceof ContentNode && 'ColumnLayout' === $contentNode->getContentTypeName())) {
             throw new InvalidArgumentException('AssertNoOrphanChildren is only valid inside a ColumnLayout object');
         }
 
@@ -29,7 +29,7 @@ class AssertNoOrphanChildrenValidator extends ConstraintValidator {
             return null;
         }, $value['columns']);
 
-        $childSlots = $columnLayout->children->map(function (ContentNode $child) {
+        $childSlots = $contentNode->children->map(function (ContentNode $child) {
             return $child->slot;
         })->toArray();
 
