@@ -37,7 +37,7 @@ export default {
   components: {
     DialogEntityDelete
   },
-  inject: ['contentNodeOwner'],
+  inject: ['allContentNodes'],
   props: {
     contentNode: { type: Object, required: true }
   },
@@ -46,7 +46,7 @@ export default {
       return this.contentNode._meta.self === this.contentNode.root()._meta.self
     },
     children () {
-      return this.contentNodeOwner.contentNodes().items.filter(child => {
+      return this.allContentNodes().items.filter(child => {
         return child.parent !== null && child.parent()._meta.self === this.contentNode._meta.self
       })
     },
@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     deletingFailed () {
-      this.contentNodeOwner.contentNodes().$reload()
+      this.allContentNodes().$reload()
     }
   }
 }

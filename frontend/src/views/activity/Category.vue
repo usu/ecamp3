@@ -63,11 +63,9 @@ export default {
   },
   provide () {
     return {
-      contentNodeOwner: {
-        preferredContentTypes: () => this.preferredContentTypes,
-        contentNodes: () => this.contentNodes,
-        camp: () => this.camp
-      }
+      preferredContentTypes: () => this.preferredContentTypes,
+      allContentNodes: () => this.contentNodes,
+      camp: () => this.camp
     }
   },
   props: {

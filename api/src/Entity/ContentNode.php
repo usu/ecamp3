@@ -11,8 +11,8 @@ use App\Doctrine\Filter\ContentNodePeriodFilter;
 use App\Repository\ContentNodeRepository;
 use App\Util\EntityMap;
 use App\Util\JsonMergePatch;
-use App\Validator\ContentNode\AssertBelongsToSameRoot;
 use App\Validator\ContentNode\AssertNoLoop;
+use App\Validator\ContentNode\AssertNoRootChange;
 use App\Validator\ContentNode\ColumnLayoutRequirements;
 use App\Validator\ContentNode\MultiSelectRequirements;
 use App\Validator\ContentNode\SingleTextRequirements;
@@ -84,7 +84,7 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
      * as the new parent is in the same camp as the old one.
      */
     #[Assert\NotNull(groups: ['create'])] // Root nodes have parent:null, but manually creating root nodes is not allowed
-    #[AssertBelongsToSameRoot(groups: ['update'])]
+    #[AssertNoRootChange(groups: ['update'])]
     #[AssertNoLoop(groups: ['update'])]
     #[ApiProperty(example: '/content_nodes/1a2b3c4d')]
     #[Gedmo\SortableGroup]
@@ -209,11 +209,11 @@ class ContentNode extends BaseEntity implements BelongsToContentNodeTreeInterfac
 
     /**
      * The entity that owns the content node tree that this content node resides in.
+     * (implements BelongsToContentNodeTreeInterface for security voting).
      */
-    #[ApiProperty(readable: false)]
     public function getRoot(): ?ContentNode {
-        // New created ContentNodes have root == this.
-        // Therefore we use the root of the parent-node.
+        // Newly created ContentNodes don't have root populated yet (happens later in DataPersister),
+        // so we're using the parent's root here
         if (null === $this->root && null !== $this->parent) {
             return $this->parent->root;
         }
