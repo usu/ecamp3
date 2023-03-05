@@ -425,8 +425,11 @@ jobs:
           restore-keys: |
             docker-compose-
 
-      # start necessary containers
-      - run: docker compose up -d php caddy frontend print browserless database docker-host
+      - name: Setup & run docker compose
+        uses: yu-ichiro/spin-up-docker-compose-action@main
+        with:
+          file: docker-compose.yml
+          up-opts: "-d php caddy frontend print browserless database docker-host"
       
       - uses: cypress-io/github-action@v5
         with:
