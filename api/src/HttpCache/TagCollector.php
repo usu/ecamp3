@@ -64,6 +64,10 @@ class TagCollector implements TagCollectorInterface {
             return;
         }
 
+        if ($this->isToOneRelation($context)) {
+            return;
+        }
+
         $cacheTag = $iri.PurgeHttpCacheListener::IRI_RELATION_DELIMITER.$context['api_attribute'];
         $this->responseTagger->addTags([$cacheTag]);
     }
@@ -83,6 +87,18 @@ class TagCollector implements TagCollectorInterface {
 
         // resource was normalized into a string IRI only
         if (\in_array($format, ['jsonld', 'jsonhal'], true) && \is_string($data)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true, if relation is OneToOne oder ManyToOne.
+     */
+    private function isToOneRelation(array $context): bool {
+        $type = $context['type'] ?? null;
+        if ($type && false == $type->isCollection()) {
             return true;
         }
 
