@@ -66,7 +66,7 @@ COPY --link docker/php/conf.d/api-platform.dev.ini $PHP_INI_DIR/conf.d/
 COPY --link docker/caddy/Caddyfile /etc/caddy/Caddyfile
 
 # renovate: datasource=github-tags depName=xdebug/xdebug
-ARG XDEBUG_VERSION=3.3.2
+ARG XDEBUG_VERSION=3.4.0
 RUN set -eux; \
 	install-php-extensions \
 	xdebug-$XDEBUG_VERSION \
