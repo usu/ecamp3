@@ -33,7 +33,7 @@
     "@nuxt/eslint-config": "0.7.4",
     "@nuxtjs/eslint-module": "4.1.0",
     "@nuxtjs/i18n": "8.5.4",
-    "@nuxtjs/tailwindcss": "6.12.2",
+    "@nuxtjs/tailwindcss": "6.13.0",
     "@tailwindcss/typography": "0.5.16",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@vitest/coverage-v8": "1.6.0",
