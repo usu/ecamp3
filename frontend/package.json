@@ -86,7 +86,7 @@
     "@babel/eslint-parser": "7.26.5",
     "@sentry/vite-plugin": "2.23.0",
     "@testing-library/jest-dom": "6.6.3",
-    "@testing-library/user-event": "14.5.2",
+    "@testing-library/user-event": "14.6.0",
     "@testing-library/vue": "5.9.0",
     "@vitejs/plugin-vue2": "2.3.1",
     "@vitest/coverage-v8": "1.6.0",
