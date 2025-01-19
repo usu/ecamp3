@@ -9,7 +9,7 @@
         "composer/package-versions-deprecated": "1.11.99",
         "cweagans/composer-patches": "1.7.3",
         "doctrine/doctrine-bundle": "2.13.2",
-        "doctrine/doctrine-migrations-bundle": "3.3.1",
+        "doctrine/doctrine-migrations-bundle": "3.4.0",
         "doctrine/orm": "2.20.1",
         "exercise/htmlpurifier-bundle": "5.0",
         "friendsofsymfony/http-cache": "3.1.0",
