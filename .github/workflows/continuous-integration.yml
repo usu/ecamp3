@@ -409,7 +409,7 @@ jobs:
     if: always()
     steps:
       - name: Fail if not all jobs were successful
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const needs = `${{ toJSON(needs) }}`;
