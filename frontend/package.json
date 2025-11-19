@@ -55,7 +55,7 @@
     "axios": "1.8.1",
     "colorjs.io": "0.5.2",
     "comlink": "4.4.2",
-    "dayjs": "1.11.13",
+    "dayjs": "1.11.19",
     "deepmerge": "4.3.1",
     "emoji-regex": "10.4.0",
     "file-saver": "2.0.5",
