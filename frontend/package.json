@@ -96,7 +96,7 @@
     "autoprefixer": "10.4.20",
     "babel-plugin-require-context-hook": "1.0.0",
     "eslint": "8.57.1",
-    "eslint-config-prettier": "9.1.0",
+    "eslint-config-prettier": "9.1.2",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-local-rules": "2.0.1",
     "eslint-plugin-n": "17.16.1",
