@@ -16,7 +16,7 @@ jobs:
       environment: ${{ github.ref_name }}
       domain: ${{ vars.SUBDOMAIN }}.${{ vars.DOMAIN }}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Create a pending GitHub deployment
         uses: bobheadxi/deployments@v1.5.0
