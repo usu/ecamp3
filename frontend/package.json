@@ -88,7 +88,7 @@
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/user-event": "14.6.1",
     "@testing-library/vue": "5.9.0",
-    "@vitejs/plugin-vue2": "2.3.3",
+    "@vitejs/plugin-vue2": "2.3.4",
     "@vitest/coverage-v8": "1.6.1",
     "@vue/babel-preset-app": "5.0.8",
     "@vue/eslint-config-prettier": "9.0.0",
