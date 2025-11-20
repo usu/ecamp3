@@ -30,7 +30,7 @@ jobs:
           cache-to: type=gha,scope=api,mode=max
           outputs: type=docker,dest=/tmp/ecamp3-dev-api.tar
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: e2e-tests-images
           path: /tmp/ecamp3-dev-*.tar
