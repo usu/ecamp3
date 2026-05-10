@@ -55,8 +55,32 @@ export default {
         start: null,
         end: null,
       },
+      eventSource: null,
     }
   },
+
+  async mounted() {
+    const url = new URL('http://localhost:3020/.well-known/mercure')
+    url.searchParams.append('topic', '/api' + this.period.scheduleEntries()._meta.self)
+    this.eventSource = new EventSource(url)
+
+    console.log('Mercure Subscription to ' + this.period.scheduleEntries()._meta.self)
+    this.eventSource.addEventListener(
+      'message',
+      (event) => {
+        let data = JSON.parse(event.data)
+        console.log(data)
+        this.api.storeHalJsonData(data)
+      },
+      false
+    )
+  },
+
+  async unmounted() {
+    console.log('Mercure Unsubscribe')
+    this.eventSource.close()
+  },
+
   computed: {
     scheduleEntries() {
       // TODO for SideBar, add filtering for the current day, now that the API supports it
