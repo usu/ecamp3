@@ -362,8 +362,8 @@ export default {
       layoutMode: false,
       editActivityTitle: false,
       categoryChangeState: null,
-      scheduleEntry: null,
       loading: true,
+      eventSource: null,
     }
   },
   head() {
@@ -378,6 +378,9 @@ export default {
   computed: {
     activity() {
       return this.api.get().activities({ id: this.activityId })
+    },
+    scheduleEntry() {
+      return this.api.get().scheduleEntries({ id: this.scheduleEntryId })
     },
     camp() {
       return this.activity.camp()
@@ -453,6 +456,26 @@ export default {
     await this.scheduleEntry.activity()._meta.load // wait if activity is being loaded as part of a collection
     this.loading = false
     // no refresh of activity here because the requireActivityScheduleEntry guard already does a refresh
+
+    const url = new URL('http://localhost:3020/.well-known/mercure')
+    url.searchParams.append('topic', '/api' + this.scheduleEntry.activity()._meta.self)
+    this.eventSource = new EventSource(url)
+
+    console.log('Mercure Subscription to ' + this.scheduleEntry.activity()._meta.self)
+    this.eventSource.addEventListener(
+      'message',
+      (event) => {
+        let data = JSON.parse(event.data)
+        console.log(data)
+        this.api.storeHalJsonData(data)
+      },
+      false
+    )
+  },
+
+  async unmounted() {
+    console.log('Mercure Unsubscribe')
+    this.eventSource.close()
   },
 
   methods: {

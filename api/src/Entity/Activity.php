@@ -21,6 +21,7 @@ use App\Validator\AssertLastCollectionItemIsNotDeleted;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -74,6 +75,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
+    mercure: [
+        'normalization_context' => self::ITEM_NORMALIZATION_CONTEXT,
+        'topics' => [
+            '@=iri(object)',
+            '@=iri(object.getCamp(), '.UrlGeneratorInterface::ABSOLUTE_PATH.')',
+            '@=iri(object, '.UrlGeneratorInterface::ABSOLUTE_PATH.')',
+        ],
+    ]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['camp'])]
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
