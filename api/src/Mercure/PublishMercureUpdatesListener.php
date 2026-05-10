@@ -243,7 +243,7 @@ final class PublishMercureUpdatesListener {
             // We need to evaluate it here, because in storeObjectToPublish() the resource would not have been persisted yet
             $this->evaluateTopics($options, $object);
 
-            $iri = $options['topics'] ?? $this->iriConverter->getIriFromResource($object, UrlGeneratorInterface::ABS_URL, $operation);
+            $iri = $options['topics'] ?? $this->iriConverter->getIriFromResource($object, UrlGeneratorInterface::ABS_PATH, $operation);
             $data = $options['data'] ?? $this->serializer->serialize($object, key($this->formats), $context);
         }
 
