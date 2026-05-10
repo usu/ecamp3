@@ -21,7 +21,6 @@ use App\Validator\AssertLastCollectionItemIsNotDeleted;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,7 +33,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             normalizationContext: self::ITEM_NORMALIZATION_CONTEXT,
             security: 'is_granted("CAMP_COLLABORATOR", object) or
-                       is_granted("CAMP_IS_PUBLIC", object)'
+                       is_granted("CAMP_IS_PUBLIC", object)',
+            mercure: true
         ),
         new Patch(
             normalizationContext: self::ITEM_NORMALIZATION_CONTEXT,
@@ -61,6 +61,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             ],
             normalizationContext: self::COLLECTION_NORMALIZATION_CONTEXT,
             security: 'is_fully_authenticated()',
+            mercure: true,
             extraProperties: [
                 'filter_by_current_user' => false,
             ]
@@ -75,14 +76,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
-    mercure: [
-        'normalization_context' => self::ITEM_NORMALIZATION_CONTEXT,
-        'topics' => [
-            '@=iri(object)',
-            '@=iri(object.getCamp(), '.UrlGeneratorInterface::ABSOLUTE_PATH.')',
-            '@=iri(object, '.UrlGeneratorInterface::ABSOLUTE_PATH.')',
-        ],
-    ]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['camp'])]
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
