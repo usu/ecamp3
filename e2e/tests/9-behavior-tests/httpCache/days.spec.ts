@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
-import { bipiUser, bruceWayneUser, grgrPeriodId } from '@/utils/constants'
+import { bipiUser, castorUser, grgrPeriodId } from '@/utils/constants'
 import {
   expectCacheHit,
-  expectCacheMiss,
   waitForCacheMiss,
   apiGet,
+  purgeCachedResponses,
   apiPatch,
   apiPost,
   apiDelete,
@@ -13,8 +13,6 @@ import {
 import collectionResponse from '@/test-data/httpCache/days_collection.json'
 
 const collectionXKeys =
-  /* campCollaboration for bipiUser */
-  'b0bdb7202a9d ' +
   /* days + links + dayResponsibles  */
   /* the first day also includes the period id 76be24bce434 */
   '4b90ff5b42c0 76be24bce434 4b90ff5b42c0#period 4b90ff5b42c0#scheduleEntries cf442e7381e9 cf442e7381e9#day cf442e7381e9#campCollaboration 4b90ff5b42c0#dayResponsibles ' +
@@ -27,10 +25,18 @@ const collectionXKeys =
 test.describe('cache test: /periods/{periodId}/days', { tag: '@mature' }, () => {
   test.describe.configure({ mode: 'serial' })
 
-  test('caches /periods/{periodId}/days separately for each login', async () => {
+  test('caches /periods/{periodId}/days between users with access', async () => {
     const uri = `/api/periods/${grgrPeriodId}/days`
 
     const bipiApi = await getAuthContext(bipiUser)
+
+    // the response is shared between users and stays cached across test runs
+    await purgeCachedResponses(
+      bipiApi,
+      '/api/periods/76be24bce434',
+      'description',
+      'purge'
+    )
 
     // first request is a cache miss
     const res1 = await apiGet(bipiApi, uri)
@@ -42,9 +48,9 @@ test.describe('cache test: /periods/{periodId}/days', { tag: '@mature' }, () => 
     // second request is a cache hit
     await expectCacheHit(bipiApi, uri)
 
-    // request with a new user is a cache miss
-    const bruceApi = await getAuthContext(bruceWayneUser)
-    await expectCacheMiss(bruceApi, uri)
+    // request with another user with access is a cache hit
+    const castorApi = await getAuthContext(castorUser)
+    await expectCacheHit(castorApi, uri)
   })
 
   test('invalidates /periods/{periodId}/days when changing the period dates', async () => {
