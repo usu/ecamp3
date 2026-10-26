@@ -33,7 +33,10 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(
             normalizationContext: self::ITEM_NORMALIZATION_CONTEXT,
             security: 'is_granted("CAMP_COLLABORATOR", object) or
-                       is_granted("CAMP_IS_PUBLIC", object)'
+                       is_granted("CAMP_IS_PUBLIC", object)',
+            extraProperties: [
+                'cache_security_delegate' => 'object.getCamp()',
+            ]
         ),
         new Patch(
             normalizationContext: self::ITEM_NORMALIZATION_CONTEXT,
@@ -65,6 +68,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_fully_authenticated()',
             extraProperties: [
                 'filter_by_current_user' => false,
+                'cache_security_delegate' => 'camp',
             ]
         ),
         new Post(

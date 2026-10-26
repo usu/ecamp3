@@ -10,9 +10,9 @@ import {
 } from '@/utils/constants'
 import {
   expectCacheHit,
-  expectCacheMiss,
   waitForCacheMiss,
   apiGet,
+  purgeCache,
   apiPatch,
   apiPost,
   apiDelete,
@@ -21,8 +21,6 @@ import {
 import collectionResponse from '@/test-data/httpCache/schedule_entries_collection.json'
 
 const collectionXKeys =
-  /* campCollaboration for bipiUser */
-  '10d8f02ce5b4 ' +
   /* scheduleEntries + links */
   /* the first scheduleEntry also includes the period id 7fa4564a5d5d */
   'e68f4e47517a 7fa4564a5d5d e68f4e47517a#period e68f4e47517a#activity e68f4e47517a#day ' +
@@ -41,7 +39,9 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial' })
 
-    test('caches /periods/{periodId}/schedule_entries separately for each login', async () => {
+    test.beforeEach(purgeCache)
+
+    test('caches /periods/{periodId}/schedule_entries between users with access', async () => {
       const uri = `/api/periods/${skilagerPeriodId}/schedule_entries`
 
       const bipiApi = await getAuthContext(bipiUser)
@@ -56,9 +56,9 @@ test.describe(
       // second request is a cache hit
       await expectCacheHit(bipiApi, uri)
 
-      // request with a new user is a cache miss
+      // request with another user with access is a cache hit
       const bruceApi = await getAuthContext(bruceWayneUser)
-      await expectCacheMiss(bruceApi, uri)
+      await expectCacheHit(bruceApi, uri)
     })
 
     test('invalidates /periods/{periodId}/schedule_entries for all users on scheduleEntry patch', async () => {
@@ -88,7 +88,7 @@ test.describe(
       await waitForCacheMiss(castorApi, uri)
       await expectCacheHit(castorApi, uri)
 
-      await expectCacheMiss(bipiApi, uri)
+      await expectCacheHit(bipiApi, uri)
     })
 
     test('invalidates /periods/{periodId}/schedule_entries for new scheduleEntry', async () => {
