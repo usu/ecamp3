@@ -4,22 +4,22 @@ import {
   bruceWayneUser,
   felicitySmoakUser,
   grgrPeriodId,
+  castorUser,
 } from '@/utils/constants'
 import entityResponse from '@/test-data/httpCache/activities_entity.json'
 import {
   getAuthContext,
   expectCacheHit,
-  expectCacheMiss,
   waitForCacheMiss,
   apiGet,
+  purgeCache,
   apiPatch,
   apiPost,
   apiDelete,
+  getCacheInfo,
 } from '@/utils/helpers'
 
 const collectionXKeys =
-  /* campCollaboration for bipiUser */
-  '10d8f02ce5b4 ' +
   /* activity "Snowboardfahren" + embedded relations */
   'a13fadc97610 a13fadc97610#scheduleEntries a13fadc97610#camp a13fadc97610#category a13fadc97610#progressLabel a13fadc97610#activityResponsibles a13fadc97610#rootContentNode ' +
   /* category "Snowboard" */
@@ -44,7 +44,9 @@ const collectionXKeys =
 test.describe('cache test: /camps/{campId}/activities', { tag: '@mature' }, () => {
   test.describe.configure({ mode: 'serial' })
 
-  test('caches /activities/{activitiyId} separately for each login', async () => {
+  test.beforeEach(purgeCache)
+
+  test('shares cache for /activities/{activitiyId} between users with camp access', async () => {
     const snowboardfahrenActivityId = 'a13fadc97610'
     const uri = `/api/activities/${snowboardfahrenActivityId}`
 
@@ -60,9 +62,16 @@ test.describe('cache test: /camps/{campId}/activities', { tag: '@mature' }, () =
     // second request is a cache hit
     await expectCacheHit(bipiApi, uri)
 
-    // request with a new user is a cache miss
+    // request with another user with access is a cache hit
     const bruceApi = await getAuthContext(bruceWayneUser)
-    await expectCacheMiss(bruceApi, uri)
+    await expectCacheHit(bruceApi, uri)
+
+    // a user without access to the camp does not get the shared response
+    const outsiderApi = await getAuthContext(castorUser)
+    expect(await getCacheInfo(outsiderApi, uri)).toMatchObject({
+      status: 404,
+      cache: 'PASS',
+    })
   })
 
   test('invalidates /activities/{activitiyId} for all users on activity patch', async () => {
@@ -80,7 +89,7 @@ test.describe('cache test: /camps/{campId}/activities', { tag: '@mature' }, () =
     await expectCacheHit(bruceApi, uri)
 
     const felicityApi = await getAuthContext(felicitySmoakUser)
-    await expectCacheMiss(felicityApi, uri)
+    await expectCacheHit(felicityApi, uri)
     await expectCacheHit(felicityApi, uri)
 
     // touch activity
@@ -93,7 +102,7 @@ test.describe('cache test: /camps/{campId}/activities', { tag: '@mature' }, () =
     await expectCacheHit(bruceApi, uri)
 
     const bruceApi2 = await getAuthContext(bruceWayneUser)
-    await expectCacheMiss(bruceApi2, uri)
+    await expectCacheHit(bruceApi2, uri)
   })
 
   test('invalidates /activities/{activitiyId} when adding a scheduleEntry', async () => {

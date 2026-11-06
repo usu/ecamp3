@@ -15,6 +15,13 @@ fos_http_cache:
         defaults:
             overwrite: true
         rules:
+            # cache headers are set by the controller, as they depend on the access decision and the JWT lifetime
+            - match:
+                  path: ^/authorization/check_access
+              headers:
+                  overwrite: false
+                  vary: [Accept]
+
             - match:
                   path: '%app.httpCache.matchPath%'
               headers:
