@@ -88,8 +88,8 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5.12'
-          tools: composer:2.10.3
+          php-version: '8.5.13'
+          tools: composer:2.11.2
           coverage: none
 
       - name: Get Composer Cache Directory
@@ -118,7 +118,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: '26.13.1'
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
@@ -143,7 +143,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: '26.13.1'
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
@@ -175,7 +175,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: '26.13.1'
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
@@ -225,9 +225,9 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5.12'
+          php-version: '8.5.13'
           extensions: intl-73.1
-          tools: composer:2.10.3
+          tools: composer:2.11.2
           coverage: pcov
 
       - name: Get Composer Cache Directory
@@ -303,6 +303,20 @@ jobs:
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: api
 
+  api-varnish-tests:
+    name: 'Tests: API Varnish cache (VTC)'
+    runs-on: ubuntu-latest
+    needs:
+      - api-check-needed
+    if: needs.api-check-needed.outputs.should_skip != 'true'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - run: >
+          docker compose run --rm --no-deps --entrypoint sh
+          -v "$PWD/api/docker/varnish:/varnish:ro"
+          http-cache /varnish/tests/run.sh
+
   api-validate-migrations:
     name: 'API: validate migrations'
     runs-on: ubuntu-latest
@@ -332,8 +346,8 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5.12'
-          tools: composer:2.10.3
+          php-version: '8.5.13'
+          tools: composer:2.11.2
           coverage: xdebug
 
       - name: Get Composer Cache Directory
@@ -368,7 +382,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: '26.13.1'
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
@@ -434,6 +448,7 @@ jobs:
       - e2e-lint
       - api-tests
       - api-validate-migrations
+      - api-varnish-tests
       - frontend-tests
       - e2e-tests-build
       - e2e-tests-run
